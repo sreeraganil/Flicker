@@ -1,5 +1,5 @@
-<!doctype html>
 {% load static %}
+<!doctype html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -43,6 +43,7 @@
       }
     }
   </script>
+  <meta name="google-site-verification" content="1_a_Jyz-vnD-gWlxpCSowkpKoykDa_bBaLeNRJ9lPL8" />
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
 
@@ -51,7 +52,7 @@
     <div class="flex items-center space-x-8">
       <a href="/" class="text-2xl font-bold text-primary-600 hover:text-primary-800 transition-colors flex items-center gap-2">
         <img src="{% static 'images/favicon.png' %}" class="h-8 w-8" alt="logo" />
-        <span class="hidden sm:inline">Flicker</span>
+        <span class="inline">Flicker</span>
       </a>
       {% if request.user.is_staff %}
         <a href="/upload/" class="text-gray-600 hover:text-primary-600 transition-colors flex items-center">
@@ -65,7 +66,7 @@
     {% if request.user.is_authenticated %}
       <div class="flex items-center space-x-4">
         <span class="text-gray-600 hidden sm:inline">Welcome, {{ request.user.username }}</span>
-        <a href="/logout/" class="text-gray-600 hover:text-primary-600 transition-colors flex items-center gap-1">
+        <a href="{% url 'wallpapers:logout' %}" class="text-gray-600 hover:text-primary-600 transition-colors flex items-center gap-1">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
           </svg>
@@ -83,10 +84,10 @@
 <footer class="bg-white border-t py-6">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-500 text-sm">
     <div class="flex justify-center space-x-6 mb-4">
-      <a href="/about/" class="hover:text-primary-600">About</a>
-      <a href="/privacy/" class="hover:text-primary-600">Privacy Policy</a>
-      <a href="/terms/" class="hover:text-primary-600">Terms of Service</a>
-      <a href="/contact/" class="hover:text-primary-600">Contact</a>
+      <a href="{% url 'about' %}" class="hover:text-primary-600">About</a>
+      <a href="{% url 'privacy_policy' %}" class="hover:text-primary-600">Privacy Policy</a>
+      <a href="{% url 'terms_of_service' %}" class="hover:text-primary-600">Terms of Service</a>
+      <a href="{% url 'contact'  %}" class="hover:text-primary-600">Contact</a>
     </div>
     &copy; {% now "Y" %} Flicker. All rights reserved.
   </div>

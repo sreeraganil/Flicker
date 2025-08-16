@@ -7,8 +7,10 @@ from django.db.models import Q
 from django.utils.text import slugify
 from .models import Wallpaper
 import cloudinary.uploader
+from cloudinary.utils import cloudinary_url
 import requests
 from django.contrib import messages
+from django.contrib.auth import logout
 
 def home(request):
     q = request.GET.get("q", "").strip()
@@ -71,33 +73,27 @@ def download(request, slug):
 @user_passes_test(lambda u: u.is_staff)
 def upload(request):
     if request.method == "POST":
-        # --- Manual Data Retrieval ---
         title = request.POST.get("title", "").strip()
         category = request.POST.get("category", "")
         image_file = request.FILES.get("image")
 
-        # --- Manual Validation ---
         if not title or not image_file:
             messages.error(request, "Title and Image file are required.")
-            return redirect("wallpapers:upload") # Or render the form again
+            return redirect("wallpapers:upload")
 
         try:
-            # Upload to Cloudinary with optimization
             uploaded = cloudinary.uploader.upload(
                 image_file,
                 folder="wallpapers",
                 resource_type="image",
-                quality="auto:best",
-                # format="auto" # Let Cloudinary decide the best format
+                quality="auto:best"
             )
 
-            # Get image metadata from Cloudinary's response
             width = uploaded.get("width")
             height = uploaded.get("height")
             size_bytes = uploaded.get("bytes", 0)
             img_format = uploaded.get("format", "")
 
-            # Fallback to get dimensions if Cloudinary fails to provide them
             if not width or not height:
                 try:
                     image_file.seek(0)
@@ -106,13 +102,25 @@ def upload(request):
                 except Exception as e:
                     print(f"Pillow error getting image dimensions: {e}")
 
-            # Create the wallpaper instance
+            public_id = uploaded["public_id"]  
+
+            preview_url, _ = cloudinary_url(
+                public_id,
+                transformation=[
+                    {"width": 600, "height": 600, "crop": "limit"},
+                    {"quality": "auto:low", "fetch_format": "auto"}
+                ]
+            )
+
+            # Original download URL (full quality, original format)
+            download_url = uploaded["secure_url"]
+
             wp = Wallpaper(
                 title=title,
                 category=category,
-                drive_file_id=uploaded["public_id"],
-                view_link=uploaded["secure_url"],
-                download_link=uploaded["secure_url"],
+                drive_file_id=public_id,
+                view_link=preview_url,
+                download_link=download_url,
                 mime_type=f"image/{img_format}",
                 width=width,
                 height=height,
@@ -120,22 +128,14 @@ def upload(request):
                 is_featured=False
             )
             
-            wp.save() # This will auto-generate slug and resolution_label
-            
+            wp.save()
             messages.success(request, f"'{wp.title}' uploaded successfully!")
             return redirect("wallpapers:detail", slug=wp.slug)
         
         except Exception as e:
             messages.error(request, f"An error occurred during upload: {str(e)}")
 
-    # For a GET request, just render the page
-    return render(
-        request, 
-        "wallpapers/upload.html", 
-        {
-            "max_size_mb": 20 # For displaying in the template
-        }
-    )
+    return render(request, "wallpapers/upload.html", {"max_size_mb": 20, 'categories': Wallpaper.CATEGORY_CHOICES})
 
 
 def detail(request, slug):
@@ -157,3 +157,20 @@ def detail(request, slug):
             "aspect_ratio": wp.aspect_ratio
         }
     )
+
+def logout_view(request):
+    logout(request)
+    return redirect('wallpapers:home')
+
+
+def about_view(request):
+    return render(request, 'pages/about.html')
+
+def privacy_policy_view(request):
+    return render(request, 'pages/privacy_policy.html')
+
+def terms_of_service_view(request):
+    return render(request, 'pages/terms_of_service.html')
+
+def contact_view(request):
+    return render(request, 'pages/contact.html')
