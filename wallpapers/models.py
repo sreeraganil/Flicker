@@ -4,8 +4,6 @@ from django.utils.text import slugify
 class Wallpaper(models.Model):
     CATEGORY_CHOICES = [
         ('nature', 'Nature'),
-        ('abstract', 'Abstract'),
-        ('minimalist', 'Minimalist'),
         ('cityscape', 'Cityscape'),
         ('space', 'Space'),
         ('fantasy', 'Fantasy'),
@@ -13,6 +11,8 @@ class Wallpaper(models.Model):
         ('anime', 'Anime'),
         ('cars', 'Cars'),
         ('technology', 'Technology'),
+        ('movies', 'Movies'),
+        ('superheros', 'Super Heroes'),
         ('other', 'Other')
     ]
 
