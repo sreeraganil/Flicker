@@ -78,6 +78,7 @@ def upload(request):
     if request.method == "POST":
         title = request.POST.get("title", "").strip()
         category = request.POST.get("category", "")
+        tags = request.POST.get("tags", "")
         image_file = request.FILES.get("image")
 
         if not title or not image_file:
@@ -127,6 +128,7 @@ def upload(request):
                 mime_type=f"image/{img_format}",
                 width=width,
                 height=height,
+                tags=tags,
                 size_bytes=size_bytes,
                 is_featured=False
             )

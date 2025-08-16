@@ -11,6 +11,7 @@ class Wallpaper(models.Model):
         ('fantasy', 'Fantasy'),
         ('games', 'Games'),
         ('anime', 'Anime'),
+        ('cars', 'Cars'),
         ('other', 'Other')
     ]
 
