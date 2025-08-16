@@ -80,6 +80,7 @@ def upload(request):
         category = request.POST.get("category", "")
         tags = request.POST.get("tags", "")
         image_file = request.FILES.get("image")
+        print(category)
 
         if not title or not image_file:
             messages.error(request, "Title and Image file are required.")
@@ -159,6 +160,7 @@ def detail(request, slug):
         {
             "wp": wp,
             "related": related,
+            "tags": wp.tags.split(","),
             "aspect_ratio": wp.aspect_ratio
         }
     )

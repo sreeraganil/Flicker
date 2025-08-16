@@ -1,0 +1,63 @@
+/* Primary Colors */
+.bg-primary-50   { background-color: #f0f9ff; }
+.bg-primary-100  { background-color: #e0f2fe; }
+.bg-primary-200  { background-color: #bae6fd; }
+.bg-primary-300  { background-color: #7dd3fc; }
+.bg-primary-400  { background-color: #38bdf8; }
+.bg-primary-500  { background-color: #0ea5e9; }
+.bg-primary-600  { background-color: #0284c7; }
+.bg-primary-700  { background-color: #0369a1; }
+.bg-primary-800  { background-color: #075985; }
+.bg-primary-900  { background-color: #0c4a6e; }
+
+.text-primary-50   { color: #f0f9ff; }
+.text-primary-100  { color: #e0f2fe; }
+.text-primary-200  { color: #bae6fd; }
+.text-primary-300  { color: #7dd3fc; }
+.text-primary-400  { color: #38bdf8; }
+.text-primary-500  { color: #0ea5e9; }
+.text-primary-600  { color: #0284c7; }
+.text-primary-700  { color: #0369a1; }
+.text-primary-800  { color: #075985; }
+.text-primary-900  { color: #0c4a6e; }
+
+/* Accent Colors */
+.bg-accent-500  { background-color: #8b5cf6; }
+.bg-accent-600  { background-color: #7c3aed; }
+
+.text-accent-500  { color: #8b5cf6; }
+.text-accent-600  { color: #7c3aed; }
+
+/* Hover Variants */
+.hover\:bg-primary-600:hover { background-color: #0284c7; }
+.hover\:bg-primary-700:hover { background-color: #0369a1; }
+.hover\:bg-accent-500:hover  { background-color: #8b5cf6; }
+.hover\:bg-accent-600:hover  { background-color: #7c3aed; }
+
+.hover\:text-primary-600:hover { color: #0284c7; }
+.hover\:text-primary-700:hover { color: #0369a1; }
+.hover\:text-accent-500:hover  { color: #8b5cf6; }
+.hover\:text-accent-600:hover  { color: #7c3aed; }
+
+
+
+/* Gradients using primary colors with 80% opacity */
+
+/* Left → Right gradient */
+.bg-gradient-to-r {
+  background-image: linear-gradient(to right, var(--tw-gradient-from), var(--tw-gradient-to));
+}
+
+/* Top → Bottom gradient */
+.bg-gradient-to-b {
+  background-image: linear-gradient(to bottom, var(--tw-gradient-from), var(--tw-gradient-to));
+}
+
+/* Color Stops */
+.from-primary-600\/80 {
+  --tw-gradient-from: rgba(2, 132, 199, 0.8); /* #0284c7 with 80% opacity */
+}
+.to-primary-800\/80 {
+  --tw-gradient-to: rgba(7, 89, 133, 0.8); /* #075985 with 80% opacity */
+}
+
