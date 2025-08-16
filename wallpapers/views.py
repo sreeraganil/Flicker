@@ -12,6 +12,9 @@ import requests
 from django.contrib import messages
 from django.contrib.auth import logout
 
+
+from django.urls import reverse
+
 def home(request):
     q = request.GET.get("q", "").strip()
     cat = request.GET.get("cat", "").strip()
@@ -174,3 +177,52 @@ def terms_of_service_view(request):
 
 def contact_view(request):
     return render(request, 'pages/contact.html')
+
+
+
+
+
+def sitemap(request):
+    base_url = request.build_absolute_uri('/')[:-1]
+    urls = []
+
+    # Homepage
+    urls.append({
+        "loc": base_url + reverse("wallpapers:home"),
+        "priority": "1.0",
+        "changefreq": "daily"
+    })
+
+    # Upload page
+    urls.append({
+        "loc": base_url + reverse("wallpapers:upload"),
+        "priority": "0.7",
+        "changefreq": "monthly"
+    })
+
+    # Wallpaper detail pages
+    for wp in Wallpaper.objects.all():
+        urls.append({
+            "loc": base_url + reverse("wallpapers:detail", args=[wp.slug]),
+            "priority": "0.8",
+            "changefreq": "weekly",
+            "lastmod": wp.updated_at.strftime("%Y-%m-%d") if hasattr(wp, "updated_at") else None
+        })
+
+    # Generate XML
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+
+    for u in urls:
+        xml += "  <url>\n"
+        xml += f"    <loc>{u['loc']}</loc>\n"
+        if u.get("lastmod"):
+            xml += f"    <lastmod>{u['lastmod']}</lastmod>\n"
+        xml += f"    <changefreq>{u['changefreq']}</changefreq>\n"
+        xml += f"    <priority>{u['priority']}</priority>\n"
+        xml += "  </url>\n"
+
+    xml += "</urlset>"
+
+    # ✅ Explicitly set XML content type
+    return HttpResponse(xml, content_type="application/xml; charset=utf-8")

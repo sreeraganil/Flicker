@@ -9,4 +9,5 @@ urlpatterns = [
     path("upload/", views.upload, name="upload"),
     path("w/<slug:slug>/", views.detail, name="detail"),
     path("w/<slug:slug>/download/", views.download, name="download"),
+    path("sitemap.xml", views.sitemap, name="sitemap"),
 ]
