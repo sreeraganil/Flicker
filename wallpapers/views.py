@@ -19,6 +19,7 @@ def home(request):
     q = request.GET.get("q", "").strip()
     cat = request.GET.get("cat", "").strip()
     res = request.GET.get("res", "").strip()
+    device = request.GET.get("device", "").strip()
     
     qs = Wallpaper.objects.all().order_by('-created_at')
     
@@ -37,6 +38,8 @@ def home(request):
             qs = qs.filter(width__gte=7680) | qs.filter(height__gte=4320)
         else:
             qs = qs.filter(resolution_label__iexact=res)
+    if device:
+        qs = qs.filter(device = device)
     
     paginator = Paginator(qs, 24)
     page = request.GET.get("page", 1)
@@ -50,6 +53,7 @@ def home(request):
             "q": q, 
             "cat": cat, 
             "res": res,
+            "device": device,
             "categories": Wallpaper.CATEGORY_CHOICES
         }
     )
@@ -78,6 +82,7 @@ def upload(request):
     if request.method == "POST":
         title = request.POST.get("title", "").strip()
         category = request.POST.get("category", "")
+        device = request.POST.get("device", "")
         tags = request.POST.get("tags", "")
         image_file = request.FILES.get("image")
         print(category)
@@ -129,6 +134,7 @@ def upload(request):
                 mime_type=f"image/{img_format}",
                 width=width,
                 height=height,
+                device=device,
                 tags=tags,
                 size_bytes=size_bytes,
                 is_featured=False
@@ -141,7 +147,13 @@ def upload(request):
         except Exception as e:
             messages.error(request, f"An error occurred during upload: {str(e)}")
 
-    return render(request, "wallpapers/upload.html", {"max_size_mb": 20, 'categories': Wallpaper.CATEGORY_CHOICES})
+    context = {
+        "max_size_mb": 20, 
+        'categories': Wallpaper.CATEGORY_CHOICES,
+        'devices': Wallpaper.DEVICE_CHOICES
+    }
+
+    return render(request, "wallpapers/upload.html", context)
 
 
 def detail(request, slug):

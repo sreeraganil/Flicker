@@ -16,6 +16,11 @@ class Wallpaper(models.Model):
         ('other', 'Other')
     ]
 
+    DEVICE_CHOICES = [
+        ('pc', 'PC'),
+        ('mobile', 'Mobile')
+    ]
+
     title = models.CharField(
         max_length=255,
         help_text="Descriptive title for the wallpaper"
@@ -90,6 +95,12 @@ class Wallpaper(models.Model):
         blank=True,
         help_text="Comma-separated tags for better discoverability"
     )
+    device = models.CharField(
+        default='pc',
+        choices=DEVICE_CHOICES,
+        help_text="Device for this wallpaper"
+    )
+    
 
     class Meta:
         ordering = ["-created_at"]
@@ -100,6 +111,7 @@ class Wallpaper(models.Model):
             models.Index(fields=['category']),
             models.Index(fields=['created_at']),
             models.Index(fields=['downloads']),
+            models.Index(fields=['device']),
         ]
 
     def __str__(self):
