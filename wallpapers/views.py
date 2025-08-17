@@ -84,6 +84,7 @@ def upload(request):
         category = request.POST.get("category", "")
         device = request.POST.get("device", "")
         tags = request.POST.get("tags", "")
+        featured = request.POST.get("featured", False)
         image_file = request.FILES.get("image")
         print(category)
 
@@ -135,9 +136,9 @@ def upload(request):
                 width=width,
                 height=height,
                 device=device,
+                is_featured=featured,
                 tags=tags,
-                size_bytes=size_bytes,
-                is_featured=False
+                size_bytes=size_bytes
             )
             
             wp.save()
