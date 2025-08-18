@@ -5,7 +5,7 @@
 
 {% block meta_description %}Download '{{ wp.title }}' - a stunning {{ wp.resolution_label }} wallpaper{% if wp.category %} in the {{ wp.get_category_display }} category{% endif %}. Free high-quality background for desktop and mobile.{% endblock %}
 
-{% block meta_keywords %}{{ wp.title }}, {{ wp.resolution_label }} wallpaper, free download, {% if wp.category %}{{ wp.get_category_display }}, {% endif %}{{ wp.mime_type|slice:"6:"|upper }}, Flicker{% endblock %}
+{% block meta_keywords %}{{ wp.title }}, {{ wp.resolution_label }} wallpaper, free download, {% if wp.category %}{{ wp.get_category_display }}, {% endif %}{{ wp.mime_type|slice:"6:"|upper }}, {% if wp.tags %} {{ wp.tags }} {% endif %} flicker, flicker free wallpapers, flicker wallpapers,{% endblock %}
 
 {% block og_image %}{{ wp.view_link }}{% endblock %}
 
