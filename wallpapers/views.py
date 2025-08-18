@@ -11,7 +11,6 @@ from cloudinary.utils import cloudinary_url
 import requests
 from django.contrib import messages
 from django.contrib.auth import logout
-from .helper import get_resized_urls
 
 
 from django.urls import reverse
@@ -178,8 +177,6 @@ def upload(request):
 
 def detail(request, slug):
     wp = get_object_or_404(Wallpaper, slug=slug)
-
-    resolution_urls = get_resized_urls(wp.drive_file_id)
     
     related = Wallpaper.objects.filter(
         category=wp.category
@@ -194,8 +191,7 @@ def detail(request, slug):
             "wp": wp,
             "related": related,
             "tags": wp.tags.split(","),
-            "aspect_ratio": wp.aspect_ratio,
-            "resolution_urls": resolution_urls
+            "aspect_ratio": wp.aspect_ratio
         }
     )
 
