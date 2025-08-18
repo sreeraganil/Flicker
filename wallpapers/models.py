@@ -3,18 +3,20 @@ from django.utils.text import slugify
 
 class Wallpaper(models.Model):
     CATEGORY_CHOICES = [
-        ('nature', 'Nature'),
+        ('anime', 'Anime'),
+        ('animals', 'Animals'),
+        ('cars', 'Cars'),
         ('cityscape', 'Cityscape'),
-        ('space', 'Space'),
         ('fantasy', 'Fantasy'),
         ('games', 'Games'),
-        ('anime', 'Anime'),
-        ('cars', 'Cars'),
-        ('technology', 'Technology'),
         ('movies', 'Movies'),
+        ('nature', 'Nature'),
+        ('space', 'Space'),
         ('superheros', 'Super Heroes'),
-        ('other', 'Other')
+        ('technology', 'Technology'),
+        ('other', 'Other'),
     ]
+
 
     DEVICE_CHOICES = [
         ('pc', 'PC'),
