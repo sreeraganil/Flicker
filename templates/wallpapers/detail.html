@@ -19,7 +19,7 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
   <article class="max-w-5xl mx-auto">
     <!-- Wallpaper Display Section -->
-    <section class="mb-10">
+    <section class="relative mb-10">
       <figure class="relative rounded-2xl overflow-hidden shadow-2xl bg-gray-100 dark:bg-gray-800 group" itemscope itemtype="https://schema.org/ImageObject">
         <!-- Main Image with Loading State -->
         <div class="aspect-w-16 aspect-h-9 flex items-center justify-center">
@@ -58,14 +58,6 @@
                 </svg>
                 {{ wp.downloads }} downloads
               </span>
-              {% comment %} {% if wp.aspect_ratio %}
-              <span class="flex items-center gap-1">
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
-                </svg>
-                {{ wp.aspect_ratio }} aspect
-              </span>
-              {% endif %} {% endcomment %}
             </div>
           </div>
         </figcaption>
@@ -106,6 +98,35 @@
         </div>
         {% endif %}
       </figure>
+
+      {% if request.user.is_staff %}
+            <!-- Delete Button -->
+            <label for="delete-modal" class="btn btn-error bg-red-500 absolute bottom-2 right-2 btn-sm text-white p-2 z-50 rounded-full">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w70 h-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 7h16"/>
+                <path d="M10 11v6M14 11v6"/>
+                <path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/>
+                <path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>
+              </svg>
+            </label>
+
+
+            <!-- DaisyUI Modal -->
+            <input type="checkbox" id="delete-modal" class="modal-toggle" />
+            <div class="modal" role="dialog">
+              <div class="modal-box">
+                <h3 class="font-bold text-lg text-red-600">Confirm Delete</h3>
+                <p class="py-4">Are you sure you want to delete "<strong>{{ wp.title }}</strong>"?</p>
+                <div class="modal-action">
+                  <form method="post" action="{% url 'wallpapers:delete' wp.slug %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-error">Yes, Delete</button>
+                  </form>
+                  <label for="delete-modal" class="btn">Cancel</label>
+                </div>
+              </div>
+            </div>
+          {% endif %}
     </section>
 
     <!-- Wallpaper Metadata Section -->
@@ -177,6 +198,19 @@
             </div>
           </div>
         </div>
+
+        <!-- Download Options Card -->
+        {% if wp.device == "pc" %}
+        <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600 col-span-1 sm:col-span-2 lg:col-span-4">
+          <h2 class="text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider mb-3">Download Options</h2>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+            <a href="{% url 'wallpapers:download' wp.slug %}?res=hd" class="bg-blue-400 text-white text-sm text-center px-1 py-1.5 shadow text-shadow-stone-800 font-semibold rounded hover:text-blue-700 hover:bg-white">HD (1920×1080)</a>
+            <a href="{% url 'wallpapers:download' wp.slug %}?res=2k" class="bg-blue-400 text-white text-sm text-center px-1 py-1.5 shadow text-shadow-stone-800 font-semibold rounded hover:text-blue-700 hover:bg-white">2K (2560×1440)</a>
+            <a href="{% url 'wallpapers:download' wp.slug %}?res=4k" class="bg-blue-400 text-white text-sm text-center px-1 py-1.5 shadow text-shadow-stone-800 font-semibold rounded hover:text-blue-700 hover:bg-white">4K (3840×2160)</a>
+            <a href="{% url 'wallpapers:download' wp.slug %}?res=mobile" class="bg-blue-400 text-white text-sm text-center px-1 py-1.5 shadow text-shadow-stone-800 font-semibold rounded hover:text-blue-700 hover:bg-white">Mobile (1080×2400)</a>
+          </div>
+        </div>
+        {% endif %}
       </div>
 
       <!-- Tags Section -->
@@ -204,7 +238,11 @@
           <svg class="h-6 w-6 mr-2" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
           </svg>
-          Download Wallpaper ({{ wp.size_bytes|filesizeformat }})
+          {% if wp.device == "mobile" %}
+          Download Wallpaper
+          {% else %}
+          Download Original
+          {% endif %} ({{ wp.size_bytes|filesizeformat }})
         </a>
       </div>
     </section>

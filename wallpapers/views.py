@@ -11,6 +11,7 @@ from cloudinary.utils import cloudinary_url
 import requests
 from django.contrib import messages
 from django.contrib.auth import logout
+from .helper import get_resized_urls
 
 
 from django.urls import reverse
@@ -61,20 +62,38 @@ def home(request):
 def download(request, slug):
     wp = get_object_or_404(Wallpaper, slug=slug)
     wp.increment_downloads()
-    
-    # For Cloudinary downloads, we might want to force download with specific transformations
-    download_url = f"{wp.download_link.replace('/upload/', '/upload/fl_attachment/')}"
-    
-    response = requests.get(download_url, stream=True)
-    file_extension = wp.mime_type.split('/')[-1] if wp.mime_type else 'jpg'
-    filename = f"{slugify(wp.title)}.{file_extension}"
 
-    response = HttpResponse(
-        response.content, 
-        content_type=f"application/{file_extension}"
-    )
+    # resolution from query (?res=4k, ?res=hd, etc.)
+    res = request.GET.get("res", "").lower()
+
+    transformations = {
+        "hd": {"width": 1920, "height": 1080, "crop": "fill"},
+        "2k": {"width": 2560, "height": 1440, "crop": "fill"},
+        "4k": {"width": 3840, "height": 2160, "crop": "fill"},
+        "mobile": {"width": 1080, "height": 2400, "crop": "fill"},
+    }
+
+    options = transformations.get(res)
+    if options:
+        # Generate transformed URL with Cloudinary
+        download_url, _ = cloudinary_url(
+            wp.drive_file_id,
+            transformation=[options],
+            flags="attachment"
+        )
+    else:
+        # Default = original
+        download_url = wp.download_link.replace("/upload/", "/upload/fl_attachment/")
+
+    # Fetch from Cloudinary and return as response
+    r = requests.get(download_url, stream=True)
+    file_extension = wp.mime_type.split('/')[-1] if wp.mime_type else 'jpg'
+    filename = f"{slugify(wp.title)}_{res or 'original'}.{file_extension}"
+
+    response = HttpResponse(r.content, content_type=f"application/{file_extension}")
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     return response
+
 
 @login_required
 @user_passes_test(lambda u: u.is_staff)
@@ -159,8 +178,9 @@ def upload(request):
 
 def detail(request, slug):
     wp = get_object_or_404(Wallpaper, slug=slug)
+
+    resolution_urls = get_resized_urls(wp.drive_file_id)
     
-    # Get related wallpapers (same category)
     related = Wallpaper.objects.filter(
         category=wp.category
     ).exclude(
@@ -174,9 +194,34 @@ def detail(request, slug):
             "wp": wp,
             "related": related,
             "tags": wp.tags.split(","),
-            "aspect_ratio": wp.aspect_ratio
+            "aspect_ratio": wp.aspect_ratio,
+            "resolution_urls": resolution_urls
         }
     )
+
+
+
+@login_required
+@user_passes_test(lambda u: u.is_staff)
+def delete_wallpaper(request, slug):
+    wp = get_object_or_404(Wallpaper, slug=slug)
+
+    if request.method == "POST":
+        # Delete from Cloudinary first
+        try:
+            if wp.drive_file_id:
+                cloudinary.uploader.destroy(wp.drive_file_id, resource_type="image")
+        except Exception as e:
+            print(f"Cloudinary delete error: {e}")
+
+        wp.delete()
+        messages.success(request, f"'{wp.title}' deleted successfully!")
+        return redirect("wallpapers:home")
+
+    return redirect("wallpapers:home")
+
+
+
 
 def logout_view(request):
     logout(request)
