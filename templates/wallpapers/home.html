@@ -6,11 +6,7 @@
     {% if not cat and not q %}Flicker | HD, 4K & 8K Wallpaper Collection{% endif %}
 {% endblock %}
 
-{% block meta_description %}
-    {% if cat %}Download free {{ cat }} wallpapers in HD, 4K and 8K resolutions. Curated collection of {{ cat }} backgrounds for desktop and mobile.{% endif %}
-    {% if q %}Search results for "{{ q }}" - Find perfect wallpapers matching your query in our collection.{% endif %}
-    {% if not cat and not q %}Discover thousands of free high-quality wallpapers in HD, 4K and 8K resolutions. Updated daily with new backgrounds.{% endif %}
-{% endblock %}
+{% block meta_description %}{% if cat %}Download free {{ cat }} wallpapers in HD, 4K and 8K resolutions. Curated collection of {{ cat }} backgrounds for desktop and mobile.{% endif %}{% if q %}Search results for "{{ q }}" - Find perfect wallpapers matching your query in our collection.{% endif %}{% if not cat and not q %}Flicker - Discover thousands of free high-quality wallpapers in HD, 4K and 8K resolutions. Updated daily with new backgrounds.{% endif %}{% endblock %}
 
 {% block content %}
 <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -21,7 +17,7 @@
       <h1 class="text-3xl md:text-6xl font-bold mb-2 md:mb-4 tracking-tight">
         {% if cat %}{{ cat|title }} Wallpapers{% endif %}
         {% if q %}Search: "{{ q }}"{% endif %}
-        {% if not cat and not q %}Stunning Free Wallpapers{% endif %}
+        {% if not cat and not q %}Flicker - Stunning Free Wallpapers{% endif %}
       </h1>
       <p class="text-lg md:text-xl text-blue-100 mb-6 md:mb-8 max-w-3xl mx-auto">
         {% if cat %}Browse our curated {{ cat }} collection{% endif %}
