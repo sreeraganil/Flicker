@@ -98,6 +98,7 @@ class Wallpaper(models.Model):
         help_text="Comma-separated tags for better discoverability"
     )
     device = models.CharField(
+        max_length=100,
         default='pc',
         choices=DEVICE_CHOICES,
         help_text="Device for this wallpaper"
