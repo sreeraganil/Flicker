@@ -62,7 +62,7 @@ WSGI_APPLICATION = 'main.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URI'),
+        default=os.getenv('SUPABASE_URI'),
         conn_max_age=60,
         ssl_require=True
     )
