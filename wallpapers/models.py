@@ -137,18 +137,34 @@ class Wallpaper(models.Model):
 
 
     def generate_resolution_label(self):
-        """Generate human-readable resolution label"""
-        if self.width >= 7680 or self.height >= 4320:
+        w, h = self.width, self.height
+        
+        # Landscape (16:9)
+        if w >= 7680 and h >= 4320:
             return "8K"
-        elif self.width >= 3840 or self.height >= 2160:
+        elif w >= 3840 and h >= 2160:
             return "4K"
-        elif self.width >= 2560 or self.height >= 1440:
+        elif w >= 2560 and h >= 1440:
             return "QHD"
-        elif self.width >= 1920 or self.height >= 1080:
+        elif w >= 1920 and h >= 1080:
             return "FHD"
-        elif self.width >= 1280 or self.height >= 720:
+        elif w >= 1280 and h >= 720:
             return "HD"
-        return f"{self.width}x{self.height}"
+        
+        # Portrait (9:16)
+        if h >= 7680 and w >= 4320:
+            return "8K"
+        elif h >= 3840 and w >= 2160:
+            return "4K"
+        elif h >= 2560 and w >= 1440:
+            return "QHD"
+        elif h >= 1920 and w >= 1080:
+            return "FHD"
+        elif h >= 1280 and w >= 720:
+            return "HD"
+        
+        return f"{w}x{h}"
+
 
     def increment_downloads(self):
         """Increment download counter"""
